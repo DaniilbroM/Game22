@@ -1,0 +1,43 @@
+/* Sword Swing Animation */
+#character.sword-swing .sword {
+    animation: swing 0.3s ease-out;
+}
+
+@keyframes swing {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(45deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+/* Enemy */
+#enemy {
+    position: absolute;
+    width: 50px;
+    height: 100px;
+    background-color: red;
+    bottom: 100px; /* Align with the ground */
+    left: 300px; /* Position the enemy */
+}
+/* Sword Swing Animation */
+#character.sword-swing .sword {
+    animation: swing 0.3s ease-out;
+}
+
+@keyframes swing {
+    0% {
+        transform: rotate(0deg);
+        transform-origin: top right; /* Pivot point for the swing */
+    }
+    50% {
+        transform: rotate(45deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}

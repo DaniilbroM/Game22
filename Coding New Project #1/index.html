@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knight vs Monsters</title>
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background-color: lightblue; /* Sky background */
+    }
+
+    #board {
+        position: relative;
+        width: 1500px; /* Fixed width of the game world */
+        height: 800px; /* Height of the game world */
+        background-color: skyblue;
+        margin: 0 auto; /* Center the game world */
+    }
+
+    #wave-counter {
+        position: fixed;
+        text-align: center;
+        left: 50%;
+        top: 10%;
+        transform: translateX(-50%);
+        font-size: 100px;
+        font-style: italic;
+        color: #000;
+    }
+
+    #ground {
+        position: absolute;
+        width: 100%;
+        height: 100px;
+        background-color: green; /* Ground color */
+        bottom: 0;
+        z-index: 1; /* Ensure the ground is above the background */
+    }
+
+    #character {
+        position: absolute;
+        width: 50px;
+        height: 100px;
+        left: 100px; /* Initial position */
+        bottom: 100px; /* Align with the ground */
+        z-index: 10;
+    }
+
+    .head {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background-color: gray;
+        border-radius: 50%;
+        top: 0;
+        left: 5px;
+    }
+
+    .body {
+        position: absolute;
+        width: 50px;
+        height: 60px;
+        background-color: darkgray;
+        top: 40px;
+    }
+
+    .arm {
+        position: absolute;
+        width: 10px;
+        height: 30px;
+        background-color: gray;
+        top: 50px;
+    }
+
+    .left-arm {
+        left: -10px;
+    }
+
+    .right-arm {
+        right: -10px;
+    }
+
+    .leg {
+        position: absolute;
+        width: 10px;
+        height: 40px;
+        background-color: gray;
+        bottom: 0;
+    }
+
+    .left-leg {
+        left: 10px;
+    }
+
+    .right-leg {
+        right: 10px;
+    }
+
+    .sword {
+        position: absolute;
+        width: 5px;
+        height: 60px;
+        background-color: silver;
+        top: 10px;
+        right: -15px;
+        transform-origin: bottom center; /* Pivot point for swinging */
+    }
+
+    #character-hp-bar {
+        position: absolute;
+        width: 50px;
+        height: 10px;
+        background-color: red;
+        top: -15px; /* Above the character */
+        left: 0;
+        border: 1px solid black;
+    }
+
+    #enemy {
+        position: absolute;
+        width: 50px;
+        height: 100px;
+        bottom: 100px; /* Align with the ground */
+        left: 500px; /* Initial position */
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #enemy-hp-bar {
+        position: absolute;
+        width: 50px;
+        height: 10px;
+        background-color: red;
+        top: -15px; /* Above the enemy */
+        left: 0;
+        border: 1px solid black;
+    }
+
+    .enemy-head {
+        width: 40px;
+        height: 40px;
+        background-color: darkred;
+        border-radius: 50%;
+    }
+
+    .enemy-body {
+        width: 50px;
+        height: 60px;
+        background-color: red;
+    }
+
+    .enemy-arms {
+        width: 70px;
+        height: 10px;
+        background-color: darkred;
+        margin-top: -5px;
+    }
+
+    #wall {
+        position: absolute;
+        width: 100px;
+        height: 100%;
+        background-color: darkgray;
+        left: 0;
+        top: 0;
+        z-index: 5; /* Ensure the wall is above the background */
+    }
+
+    .wall {
+        position: absolute;
+        background-color: gray;
+        width: 50px;
+        height: 100%;
+    }
+
+    #right-wall {
+        position: absolute;
+        width: 100px;
+        height: 100%;
+        background-color: darkgray;
+        right: 0;
+        top: 0;
+        z-index: 5; /* Ensure the wall is above the background */
+    }
+
+    #inventory-button {
+        position: absolute; /* Changed to absolute */
+        top: 10px; /* Positioned at the top */
+        right: 10px; /* Positioned relative to the right wall */
+        padding: 10px 20px;
+        background-color: #555;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        z-index: 10; /* Ensure it appears above the right wall */
+    }
+
+    #inventory {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        background-color: white;
+        border: 2px solid #555;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: none; /* Hidden by default */
+        z-index: 1000;
+    }
+
+    #inventory h2 {
+        margin-top: 0;
+        text-align: center;
+    }
+
+    #inventory-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    #inventory-list div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .equip-button {
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .equip-button:hover {
+        background-color: #0056b3;
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+</head>
+<body>
+    <div id="board">
+        <div id="wave-counter">Wave: 1</div>
+        <div id="wall"></div>
+        <div id="ground"></div>
+        <div id="character">
+            <div id="character-hp-bar"></div>
+            <div class="head"></div>
+            <div class="body"></div>
+            <div class="arm left-arm"></div>
+            <div class="arm right-arm"></div>
+            <div class="leg left-leg"></div>
+            <div class="leg right-leg"></div>
+            <div class="sword"></div>
+        </div>
+        <div id="enemy">
+            <div id="enemy-hp-bar"></div>
+            <div class="enemy-head"></div>
+            <div class="enemy-body"></div>
+            <div class="enemy-arms"></div>
+        </div>
+        <div id="right-wall" class="wall"></div>
+        <button id="inventory-button">Inventory</button>
+    </div>
+    <div id="inventory" class="hidden">
+        <h2>Inventory</h2>
+        <div id="inventory-list">
+            <!-- Inventory items will be dynamically added here -->
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
